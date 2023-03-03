@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <!-- Параметры подключения к базе данных -->
+        <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+        <property name="hibernate.connection.url">jdbc:mysql://${MYSQL_HOST:localhost}:3306/example</property>
+        <property name="hibernate.connection.username">root</property>
+        <property name="hibernate.connection.password">root</property>
+
+        <!-- Настройки кэширования -->
+        <property name="hibernate.cache.use_second_level_cache">true</property>
+        <property name="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory</property>
+
+        <!-- Настройки журналирования Envers -->
+        <property name="org.hibernate.envers.audit_strategy">org.hibernate.envers.strategy.ValidityAuditStrategy</property>
+        <property name="org.hibernate.envers.audit_strategy_validity_end_rev_field_name">AUDIT_STRATEGY_VALIDITY_END_REV</property>
+        <property name="org.hibernate.envers.audit_strategy_validity_store_revend_timestamp">true</property>
+        <property name="org.hibernate.envers.audit_table_prefix">AUDIT_</property>
+        <property name="org.hibernate.envers.audit_table_suffix">_HISTORY</property>
+        <property name="org.hibernate.envers.revision_field_name">REVISION</property>
+        <property name="org.hibernate.envers.revision_type_field_name">REVISION_TYPE</property>
+        <property name="org.hibernate.envers.track_entities_changed_in_revision">true</property>
+
+        <!-- Маппинг классов -->
+        <mapping class="parser.model.User"/>
+        <mapping class="parser.model.Mailing"/>
+        <mapping class="parser.model.Verification"/>
+
+    </session-factory>
+</hibernate-configuration>
