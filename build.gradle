@@ -1,0 +1,60 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.2.0'
+	id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'com.denver7074'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '17'
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+ext {
+	set('springCloudVersion', "2023.0.0")
+}
+
+dependencies {
+	implementation 'org.telegram:telegrambots:6.3.0'
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	implementation 'org.modelmapper:modelmapper:3.2.0'
+	implementation 'javax.xml.bind:jaxb-api:2.3.1'
+	//work with bd
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.postgresql:postgresql'
+	implementation 'org.flywaydb:flyway-core:9.21.0'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	//utils
+	implementation 'commons-beanutils:commons-beanutils:1.9.4'
+	implementation 'org.apache.commons:commons-lang3:3.13.0'
+	implementation 'org.apache.commons:commons-collections4:4.4'
+	implementation 'com.google.guava:guava:32.1.2-jre'
+	implementation 'net.glxn.qrgen:javase:2.0'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.16.0'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.16.0'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
