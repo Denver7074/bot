@@ -1,0 +1,79 @@
+package com.denver7074.bot.service.response;
+
+import com.denver7074.bot.model.BotState;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.apache.commons.collections4.CollectionUtils.isEmpty;
+
+@Data
+@NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class SendMsg {
+
+    String textMsg;
+    BotState botState;
+    Long userId;
+    List<String> textButtons;
+    Integer messageId;
+
+    public SendMsg(String textMsg, BotState botState, Long userId, List<String> textButtons, Integer messageId) {
+        this.textMsg = textMsg;
+        this.botState = botState;
+        this.userId = userId;
+        this.textButtons = textButtons;
+        this.messageId = messageId;
+    }
+
+    public SendMsg(String textMsg, BotState botState, Long userId, List<String> textButtons) {
+        this.textMsg = textMsg;
+        this.botState = botState;
+        this.userId = userId;
+        this.textButtons = textButtons;
+    }
+
+    public SendMessage getMsg() {
+        return SendMessage
+                .builder()
+                .chatId(getUserId())
+                .text(getTextMsg())
+                .replyMarkup(getKeyBoards(textButtons))
+                .build();
+    }
+
+    public EditMessageText getEditMsg() {
+        return EditMessageText
+                .builder()
+                .chatId(userId)
+                .text(textMsg)
+                .messageId(messageId)
+                .replyMarkup(getKeyBoards(textButtons))
+                .build();
+    }
+
+    private static InlineKeyboardMarkup getKeyBoards(List<String> textButtons) {
+        if (isEmpty(textButtons)) return null;
+        List<List<InlineKeyboardButton>> buttons = new ArrayList<>(textButtons.size());
+        for (String l : textButtons) {
+            buttons.add(List.of(
+                    InlineKeyboardButton.builder()
+                            .text(l)
+                            .callbackData(l)
+                            .build()));
+        }
+        return InlineKeyboardMarkup
+                .builder()
+                .keyboard(buttons)
+                .build();
+    }
+}
