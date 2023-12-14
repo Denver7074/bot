@@ -12,6 +12,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
@@ -22,22 +23,22 @@ import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 public class SendMsg {
 
     String textMsg;
-    BotState botState;
+//    BotState botState;
     Long userId;
     List<String> textButtons;
     Integer messageId;
 
-    public SendMsg(String textMsg, BotState botState, Long userId, List<String> textButtons, Integer messageId) {
+    public SendMsg(String textMsg, Long userId, List<String> textButtons, Integer messageId) {
         this.textMsg = textMsg;
-        this.botState = botState;
+//        this.botState = botState;
         this.userId = userId;
         this.textButtons = textButtons;
         this.messageId = messageId;
     }
 
-    public SendMsg(String textMsg, BotState botState, Long userId, List<String> textButtons) {
+    public SendMsg(String textMsg, Long userId, List<String> textButtons) {
         this.textMsg = textMsg;
-        this.botState = botState;
+//        this.botState = botState;
         this.userId = userId;
         this.textButtons = textButtons;
     }
@@ -61,7 +62,7 @@ public class SendMsg {
                 .build();
     }
 
-    private static InlineKeyboardMarkup getKeyBoards(List<String> textButtons) {
+    private static InlineKeyboardMarkup getKeyBoards(Collection<String> textButtons) {
         if (isEmpty(textButtons)) return null;
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>(textButtons.size());
         for (String l : textButtons) {

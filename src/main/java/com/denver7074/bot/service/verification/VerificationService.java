@@ -1,10 +1,13 @@
 package com.denver7074.bot.service.verification;
 
 import com.denver7074.bot.model.Equipment;
+import com.denver7074.bot.model.Subscriber;
+import com.denver7074.bot.utils.RedisCash;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionLikeType;
 import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
@@ -20,8 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.denver7074.bot.utils.Constants.SORT;
+import static com.denver7074.bot.utils.Errors.E001;
 
 @Service
+@RequiredArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class VerificationService {
 
@@ -31,15 +36,19 @@ public class VerificationService {
     @NonFinal
     @Value("${verification.openfeign}")
     Boolean openfeign;
+    RedisCash redisCash;
     ObjectMapper mapper;
     Verification verification;
 
-    public VerificationService(ObjectMapper mapper, Verification verification) {
-        this.mapper = mapper;
-        this.verification = verification;
+
+
+    public Equipment findLastVerification(Subscriber user, String command) {
+        Equipment equipment = findVerifications(command).stream().findFirst().orElseThrow(() -> E001.thr(command));
+        redisCash.save(user, equipment);
+        return equipment;
     }
 
-    public List<Equipment> findLastVerification(String command) {
+    public List<Equipment> findVerifications(String command) {
         String[] s = command.trim().split(" ");
         if (openfeign) return findLastVerificationWithFeignClient(s[0], s[1]);
         return findLastVerification(s[0], s[1]);

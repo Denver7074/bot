@@ -12,7 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public enum Errors {
 
-    E001(500, "Сущность %s по индивидуальному идентификатору %d не найдена"),
+    E001(500, "Прибор с даннми %s не найден. Проверьте введенные данные и повторите ввод или вернитесь в главное меню."),
     E002(500, "Отсутствуют обязательные параметры: %s");
 
     int code;

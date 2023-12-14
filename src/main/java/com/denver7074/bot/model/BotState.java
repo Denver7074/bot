@@ -3,6 +3,7 @@ package com.denver7074.bot.model;
 import com.denver7074.bot.service.response.SendMsg;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.apache.commons.lang3.ObjectUtils;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 
@@ -23,38 +24,39 @@ public enum BotState {
     ABOUT_ME("Мой профиль:\n"),
     DEFAULT("Я тебя не понимаю"),
 
+    //WORK_WITH_VERIFICATION меню
     VERIFICATION_FIND("Введите номер ГРСИ и заводской номер через пробел или скачайте шаблон, " +
-            "заполните обязательные поля и загрузите обратным сообщением\n Пример ввода: 51124-12 191"),
+            "заполните обязательные поля и загрузите обратным сообщением.\n Пример ввода: 51124-12 191"),
     VERIFICATION_SHOW("Просмотр всех СИ закрепленнх за пользователем:"),
     //вот здесь нужно выгрузить все средства измерения в excel и на основе этой таблицы внести правки
     VERIFICATION_UPDATE("Вы можете изменить только название оборудование, если оно было загружено из ФГИС Аршин некорректно.\n" +
                         "Скачайте шаблон excel, введите корректное название СИ и ответным сообщением отправьте шаблон с исправленными названиями."),
-    EMAIL_NOTIFICATION("Что желаете?");
+    EMAIL_NOTIFICATION("Укажите email адреса на которые необходимо производить рассылку " +
+            "или нажмите на кнопу с адресом, который вы хотите исключить из рассылки."),
+    //VERIFICATION_FIND
+    SAVE_VERIFICATION("%s \n Нажмите \"Поставить на контроль\" если хотите получать оповещения о необходимости поверки или продолжайте ручной поиск." +
+            "\n Пример ввода: 51124-12 191"),
+    VERIFICATION_SAVE("СИ поставленно на контроль. Выберите дальнейшую команд из меню или продолжайте поиск." +
+                      "\n Пример ввода: 51124-12 191"),
+    UNPLUG_EMAIL("Выберети адреса, которе необходимо отключить от оповещения."),
+    PLUG_EMAIL("Оповещение подлючено по следующим email адресам:%s \n Укажите ещё адреса, по которым следует проводить email рассылку");
 
     public static final EnumSet<BotState> botStates = EnumSet.copyOf(
-            List.of(WORK_WITH_VERIFICATION)
+            List.of(VERIFICATION_FIND, SAVE_VERIFICATION, UNPLUG_EMAIL, PLUG_EMAIL)
     );
 
     String message;
 
     public SendMessage sendMessage(Subscriber user, List<String> buttons, Object... args) {
         user.setBotState(this);
-        return new SendMsg(String.format(this.message, args), this, user.getId(), buttons).getMsg();
-    }
-
-    public SendMessage sendMessage(Subscriber user, List<String> buttons) {
-        user.setBotState(this);
-        return new SendMsg(this.message, this, user.getId(), buttons).getMsg();
+        String textMsg = ObjectUtils.allNull(args) ? this.message : String.format(this.message, args);
+        return new SendMsg(textMsg, user.getId(), buttons).getMsg();
     }
 
     public EditMessageText sendMessage(Subscriber user, List<String> buttons, Integer messageId, Object... args) {
         user.setBotState(this);
-        return new SendMsg(String.format(this.message, args), this, user.getId(), buttons, messageId).getEditMsg();
-    }
-
-    public EditMessageText sendMessage(Subscriber user, List<String> buttons, Integer messageId) {
-        user.setBotState(this);
-        return new SendMsg(this.message, this, user.getId(), buttons, messageId).getEditMsg();
+        String textMsg = ObjectUtils.allNull(args) ? this.message : String.format(this.message, args);
+        return new SendMsg(textMsg, user.getId(), buttons, messageId).getEditMsg();
     }
 
 

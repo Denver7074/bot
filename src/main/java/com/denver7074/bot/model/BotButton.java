@@ -15,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public enum BotButton {
-
+    SAVE_VERIFICATION("Поставить на контроль"),
     VERIFICATION_SHOW("\uD83D\uDDD3 Просмотр списка CИ"),
     VERIFICATION_FIND("\uD83D\uDD0E Поиск и добавление СИ "),
     EMAIL_NOTIFICATION("\uD83D\uDCE8 Управление e-mail оповещением"),
@@ -35,9 +35,9 @@ public enum BotButton {
     String value;
 
     public static final List<String> verification =
-            List.of(VERIFICATION_FIND.getValue(), VERIFICATION_SHOW.getValue(), EMAIL_NOTIFICATION.getValue(),VERIFICATION_UPDATE.getValue());
+            List.of(VERIFICATION_FIND.getValue(), VERIFICATION_SHOW.getValue(), EMAIL_NOTIFICATION.getValue(),VERIFICATION_UPDATE.getValue(), SAVE_VERIFICATION.getValue());
 
-
-
+    public static final List<String> plugEmail =
+            List.of(UNPLUG_EMAIL.getValue(), PLUG_EMAIL.getValue());
 
 }

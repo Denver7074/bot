@@ -1,24 +1,35 @@
 package com.denver7074.bot.service;
 
+import com.denver7074.bot.model.Email;
 import com.denver7074.bot.model.Subscriber;
 import com.denver7074.bot.model.common.IdentityEntity;
+import com.denver7074.bot.utils.RedisCash;
 import com.denver7074.bot.utils.Utils;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
+import jakarta.persistence.criteria.*;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.apache.commons.lang3.BooleanUtils;
 import org.modelmapper.ModelMapper;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.util.CastUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
+import static com.denver7074.bot.utils.Constants.NO_EMAIL;
 import static com.denver7074.bot.utils.Errors.E001;
+import static java.util.Collections.emptyList;
+import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 
 @Service
 @Transactional
@@ -54,8 +65,8 @@ public class CrudService {
 
 
     public <E extends IdentityEntity> E create(E entity) {
-        entity.reachTransient(this);
-        E merge = entityManager.merge(entity);
+        IdentityEntity reach = entity.reach(this);
+        IdentityEntity merge = entityManager.merge(reach);
         return CastUtils.cast(merge);
     }
 
@@ -67,14 +78,36 @@ public class CrudService {
         return CastUtils.cast(target);
     }
 
-    @Cacheable(value = "user", key = "#id")
-    public <ID> Subscriber find(ID id) {
-        return find(Subscriber.class, id);
+    public <E> List<E> find(Class<E> clazz, Map<String, Object> filter) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<E> query = cb.createQuery(clazz);
+        Root<E> root = query.from(clazz);
+        List<Predicate> predicates = new ArrayList<>();
+        for (Map.Entry<String, Object> entry : filter.entrySet()) {
+            String field = entry.getKey();
+            Object value = entry.getValue();
+            predicates.add(cb.equal(root.get(field), value));
+        }
+        query.where(predicates.toArray(new Predicate[0]));
+        return entityManager.createQuery(query).getResultList();
     }
 
-    @CachePut(value = "user", key = "#id")
-    public Subscriber update(Subscriber source, Long id) {
-        return update(source, id, Subscriber.class);
+    public List<String> find(Subscriber user) {
+        List<String> buttonEmail = Utils.safeGet(() -> findButtonEmail(user));
+        return isEmpty(buttonEmail) ? emptyList() : buttonEmail;
+    }
+
+    public List<String> findButtonEmail(Subscriber user) {
+        return find(Email.class, Collections.singletonMap(Email.Fields.userId, user.getId()))
+                .stream()
+                .map(Email::getEmail)
+                .toList();
+    }
+
+    public <T extends IdentityEntity> void delete(T entity, Class<T> clazz) {
+        if (ObjectUtils.isEmpty(entity)) return;
+        T reference = entityManager.getReference(clazz, entity.getId());
+        entityManager.remove(reference);
     }
 
 }

@@ -30,7 +30,6 @@ import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 @RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@EntityListeners(AuditingEntityListener.class)
 public class Equipment extends IdentityEntity {
 
     @JsonAlias("vri_id")
@@ -62,8 +61,8 @@ public class Equipment extends IdentityEntity {
     String result;
     @ExcelCell(valueCell = "Ссылка на ФГИС аршин", numberCell = 10)
     String href;
-    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
-    Subscriber user;
+//    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+//    Subscriber user;
 
     @JsonProperty("idVerification")
     public void setIdVerification(String idVerification) {
