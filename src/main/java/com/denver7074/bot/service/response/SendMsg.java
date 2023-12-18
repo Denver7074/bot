@@ -6,11 +6,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -22,23 +26,27 @@ import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SendMsg {
 
-    String textMsg;
-//    BotState botState;
     Long userId;
-    List<String> textButtons;
+    String textMsg;
     Integer messageId;
+    InputStream file;
+    Collection<String> textButtons;
 
-    public SendMsg(String textMsg, Long userId, List<String> textButtons, Integer messageId) {
+    public SendMsg(String textMsg, Long userId, InputStream file) {
         this.textMsg = textMsg;
-//        this.botState = botState;
+        this.file = file;
+        this.userId = userId;
+    }
+
+    public SendMsg(String textMsg, Long userId, Collection<String> textButtons, Integer messageId) {
+        this.textMsg = textMsg;
         this.userId = userId;
         this.textButtons = textButtons;
         this.messageId = messageId;
     }
 
-    public SendMsg(String textMsg, Long userId, List<String> textButtons) {
+    public SendMsg(String textMsg, Long userId, Collection<String> textButtons) {
         this.textMsg = textMsg;
-//        this.botState = botState;
         this.userId = userId;
         this.textButtons = textButtons;
     }
@@ -62,19 +70,27 @@ public class SendMsg {
                 .build();
     }
 
+    public SendDocument getDocument() {
+        return SendDocument
+                .builder()
+                .chatId(userId)
+                .caption(textMsg)
+                .document(new InputFile(file, String.format("%s.xlsx", "Поверка")))
+                .build();
+    }
+
     private static InlineKeyboardMarkup getKeyBoards(Collection<String> textButtons) {
         if (isEmpty(textButtons)) return null;
-        List<List<InlineKeyboardButton>> buttons = new ArrayList<>(textButtons.size());
+        List<InlineKeyboardButton> buttons = new ArrayList<>(textButtons.size());
         for (String l : textButtons) {
-            buttons.add(List.of(
-                    InlineKeyboardButton.builder()
+            buttons.add(InlineKeyboardButton.builder()
                             .text(l)
                             .callbackData(l)
-                            .build()));
+                            .build());
         }
         return InlineKeyboardMarkup
                 .builder()
-                .keyboard(buttons)
+                .keyboard(List.of(buttons))
                 .build();
     }
 }

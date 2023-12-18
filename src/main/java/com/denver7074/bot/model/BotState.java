@@ -4,9 +4,14 @@ import com.denver7074.bot.service.response.SendMsg;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.apache.commons.lang3.ObjectUtils;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -20,8 +25,11 @@ public enum BotState {
     //Главное меню
     WORK_WITH_VERIFICATION("В данном разделе 'Поверка СИ' бот " +
             "позволит вам организовать следующие:"),
-    SHOW_HELP_MENU("Бот поможет вам в поиске поверке СИ /verification \uD83D\uDD0D\n\n"),
-    ABOUT_ME("Мой профиль:\n"),
+    SHOW_HELP_MENU("У бота есть следующие команды\n " +
+            "/start главное меню\n" +
+            "/profile посмотреть свой профиль\n" +
+            " /verification \uD83D\uDD0D поиск поверки СИ"),
+    ABOUT_ME("Мой профиль:\n %s"),
     DEFAULT("Я тебя не понимаю"),
 
     //WORK_WITH_VERIFICATION меню
@@ -37,17 +45,15 @@ public enum BotState {
     SAVE_VERIFICATION("%s \n Нажмите \"Поставить на контроль\" если хотите получать оповещения о необходимости поверки или продолжайте ручной поиск." +
             "\n Пример ввода: 51124-12 191"),
     VERIFICATION_SAVE("СИ поставленно на контроль. Выберите дальнейшую команд из меню или продолжайте поиск." +
-                      "\n Пример ввода: 51124-12 191"),
-    UNPLUG_EMAIL("Выберети адреса, которе необходимо отключить от оповещения."),
-    PLUG_EMAIL("Оповещение подлючено по следующим email адресам:%s \n Укажите ещё адреса, по которым следует проводить email рассылку");
+                      "\n Пример ввода: 51124-12 191");
 
-    public static final EnumSet<BotState> botStates = EnumSet.copyOf(
-            List.of(VERIFICATION_FIND, SAVE_VERIFICATION, UNPLUG_EMAIL, PLUG_EMAIL)
+    public static final EnumSet<BotState> botStates = EnumSet.of(
+            VERIFICATION_FIND, SAVE_VERIFICATION, EMAIL_NOTIFICATION
     );
 
     String message;
 
-    public SendMessage sendMessage(Subscriber user, List<String> buttons, Object... args) {
+    public SendMessage sendMessage(Subscriber user, Collection<String> buttons, Object... args) {
         user.setBotState(this);
         String textMsg = ObjectUtils.allNull(args) ? this.message : String.format(this.message, args);
         return new SendMsg(textMsg, user.getId(), buttons).getMsg();
@@ -57,6 +63,12 @@ public enum BotState {
         user.setBotState(this);
         String textMsg = ObjectUtils.allNull(args) ? this.message : String.format(this.message, args);
         return new SendMsg(textMsg, user.getId(), buttons, messageId).getEditMsg();
+    }
+
+    public SendDocument sendMessage(Subscriber user, InputStream file, Object... args) {
+        user.setBotState(this);
+        String textMsg = ObjectUtils.allNull(args) ? this.message : String.format(this.message, args);
+        return new SendMsg(textMsg, user.getId(), file).getDocument();
     }
 
 

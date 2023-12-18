@@ -1,5 +1,6 @@
 package com.denver7074.bot.model;
 
+import com.denver7074.bot.utils.Utils;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -36,6 +37,14 @@ public class Subscriber implements Serializable {
     LocalDate registration;
     @LastModifiedDate
     LocalDateTime activity;
+
+    @Override
+    public String toString() {
+        return  "id: " + id + "\n" +
+                "имя: " + firstName + "\n" +
+                "количество приборов: " + countEquipment + "\n" +
+                "дата регистрации в боте: " + Utils.convertDate(registration);
+    }
 //    @OneToMany(mappedBy = "user")
 //    List<Email> emailList = new ArrayList<>();
 

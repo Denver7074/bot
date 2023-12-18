@@ -1,6 +1,8 @@
 package com.denver7074.bot.utils;
 
 
+import org.springframework.beans.factory.annotation.Value;
+
 import java.util.List;
 
 public final class Constants {

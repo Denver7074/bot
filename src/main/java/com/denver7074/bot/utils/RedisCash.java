@@ -50,9 +50,9 @@ public class RedisCash {
     public void save(Subscriber user, Equipment eq) {
         Equipment equipment = Utils.safeGet(() -> find(VERIFICATION, user.getId(), Equipment.class));
         if (isEmpty(equipment)) {
-//            eq.setUser(user);
             save(VERIFICATION, user.getId(), eq);
         } else {
+            equipment.setUserId(user.getId());
             crudService.create(equipment);
             delete(VERIFICATION, user.getId());
         }

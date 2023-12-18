@@ -1,31 +1,27 @@
 package com.denver7074.bot.model;
 
 import com.denver7074.bot.model.common.IdentityEntity;
-import com.denver7074.bot.service.CrudService;
 import com.denver7074.bot.service.excel.ExcelCell;
-import com.denver7074.bot.utils.Utils;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import lombok.experimental.FieldNameConstants;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDate;
 
 import static com.denver7074.bot.utils.Constants.FGIS_ARCHIN;
 import static com.denver7074.bot.utils.Utils.convertDate;
-import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
-import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 
 @Data
 @Entity
+@FieldNameConstants
 @Accessors(chain = true)
 @RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = true)
@@ -33,36 +29,35 @@ import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 public class Equipment extends IdentityEntity {
 
     @JsonAlias("vri_id")
-    @ExcelCell(valueCell = "Номер записи ФГИС Аршин", numberCell = 1)
+    @ExcelCell(valueCell = "Номер записи ФГИС Аршин")
     String idVerification;
     @JsonAlias("mi.mitnumber")
-    @ExcelCell(valueCell = "Номер в ФГРСИ", numberCell = 2)
+    @ExcelCell(valueCell = "Номер в ФГРСИ")
     String mitNumber;
     @JsonAlias("mi.number")
-    @ExcelCell(valueCell = "Заводской номер", numberCell = 3)
+    @ExcelCell(valueCell = "Заводской номер")
     String number;
     @JsonAlias("valid_date")
-    @ExcelCell(valueCell = "Дата окончания поверки", numberCell = 4)
+    @ExcelCell(valueCell = "Дата окончания поверки")
     LocalDate validDate;
     @JsonAlias("verification_date")
-    @ExcelCell(valueCell = "Дата поверки", numberCell = 5)
+    @ExcelCell(valueCell = "Дата поверки")
     LocalDate verificationDate;
     @JsonAlias("mi.mititle")
-    @ExcelCell(valueCell = "Название СИ", numberCell = 6)
+    @ExcelCell(valueCell = "Название СИ")
     String name;
     @JsonAlias("mi.modification")
-    @ExcelCell(valueCell = "модификация", numberCell = 7)
+    @ExcelCell(valueCell = "Модификация")
     String modification;
     @JsonAlias("org_title")
-    @ExcelCell(valueCell = "Организация поверитель", numberCell = 8)
+    @ExcelCell(valueCell = "Организация поверитель")
     String orgTitle;
     @JsonAlias("result_text")
-    @ExcelCell(valueCell = "Пригодность", numberCell = 9)
+    @ExcelCell(valueCell = "Пригодность")
     String result;
-    @ExcelCell(valueCell = "Ссылка на ФГИС аршин", numberCell = 10)
+    @ExcelCell(valueCell = "Ссылка на ФГИС аршин")
     String href;
-//    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
-//    Subscriber user;
+    Long userId;
 
     @JsonProperty("idVerification")
     public void setIdVerification(String idVerification) {

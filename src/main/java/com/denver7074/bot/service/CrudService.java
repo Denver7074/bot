@@ -44,7 +44,6 @@ public class CrudService {
         return Utils.safeGet(() -> modelMapper.map(dto, clazz));
     }
 
-
     public <E, ID> E find(Class<E> clazz, ID id) {
         return Optional.ofNullable(entityManager.find(clazz, id))
                 .orElseThrow(() -> E001.thr(clazz.getSimpleName(), id));

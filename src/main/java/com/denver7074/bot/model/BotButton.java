@@ -1,15 +1,11 @@
 package com.denver7074.bot.model;
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
-import java.util.EnumSet;
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @RequiredArgsConstructor
@@ -24,7 +20,6 @@ public enum BotButton {
     AUTO_FIND("⚙️Автоматический поиск с помощью шаблона"),
     //поставка на контроль СИ
     CONTROL_MEASURING_INSTRUMENT("\uD83D\uDCCC Поставить на контроль СИ"),
-    NOT_CONTROL_MEASURING_INSTRUMENT("\uD83D\uDDD1 Снять с контроля СИ"),
     //подключение оповещения
     UNPLUG_EMAIL("\uD83D\uDCEA Отключить оповещение"),
     PLUG_EMAIL("\uD83D\uDCEB Подключить оповещение"),
@@ -34,10 +29,14 @@ public enum BotButton {
 
     String value;
 
-    public static final List<String> verification =
-            List.of(VERIFICATION_FIND.getValue(), VERIFICATION_SHOW.getValue(), EMAIL_NOTIFICATION.getValue(),VERIFICATION_UPDATE.getValue(), SAVE_VERIFICATION.getValue());
+    public static final Set<String> verification = Set.of(
+            VERIFICATION_FIND.getValue(), VERIFICATION_SHOW.getValue(), EMAIL_NOTIFICATION.getValue(),VERIFICATION_UPDATE.getValue()
+    );
 
-    public static final List<String> plugEmail =
-            List.of(UNPLUG_EMAIL.getValue(), PLUG_EMAIL.getValue());
+    public static final Set<String> showAndUpdate = Set.of(
+            VERIFICATION_SHOW.getValue(),
+            VERIFICATION_UPDATE.getValue(),
+            VERIFICATION_FIND.getValue()
+    );
 
 }

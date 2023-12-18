@@ -2,6 +2,7 @@ package com.denver7074.bot.service.verification;
 
 import com.denver7074.bot.model.Equipment;
 import com.denver7074.bot.model.Subscriber;
+import com.denver7074.bot.service.CrudService;
 import com.denver7074.bot.utils.RedisCash;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,7 @@ import java.util.List;
 
 import static com.denver7074.bot.utils.Constants.SORT;
 import static com.denver7074.bot.utils.Errors.E001;
+import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 
 @Service
 @RequiredArgsConstructor
@@ -36,19 +38,28 @@ public class VerificationService {
     @NonFinal
     @Value("${verification.openfeign}")
     Boolean openfeign;
-    RedisCash redisCash;
     ObjectMapper mapper;
+    RedisCash redisCash;
+    CrudService crudService;
     Verification verification;
 
 
+    public Equipment findLastVerification(Subscriber user, String mitnumber, String number) {
+        List<Equipment> list = new ArrayList<>();
+        if (openfeign)  list.addAll(findLastVerificationWithFeignClient(mitnumber, number));
+        else list.addAll(findLastVerification(mitnumber, number));
+        Equipment eq = list.stream().findFirst().orElse(null);
+        if (isNotEmpty(eq)) eq.setUserId(user.getId());
+        return eq;
+    }
 
     public Equipment findLastVerification(Subscriber user, String command) {
-        Equipment equipment = findVerifications(command).stream().findFirst().orElseThrow(() -> E001.thr(command));
+        Equipment equipment = findLastVerification(command).stream().findFirst().orElseThrow(() -> E001.thr(command));
         redisCash.save(user, equipment);
         return equipment;
     }
 
-    public List<Equipment> findVerifications(String command) {
+    public List<Equipment> findLastVerification(String command) {
         String[] s = command.trim().split(" ");
         if (openfeign) return findLastVerificationWithFeignClient(s[0], s[1]);
         return findLastVerification(s[0], s[1]);

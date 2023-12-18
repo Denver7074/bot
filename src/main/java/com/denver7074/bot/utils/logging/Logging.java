@@ -31,7 +31,7 @@ public class Logging {
         Object result = joinPoint.proceed();
         String finishMessage = isNotEmpty(result)
                 ? String.format("Finished method %s in the class %s with results %s", methodName, nameClass, result)
-                : String.format("Finished method % in the class %s", methodName, nameClass);
+                : String.format("Finished method %s in the class %s", methodName, nameClass);
         log.info(finishMessage);
         return result;
     }
