@@ -33,14 +33,6 @@ public class CallbackQueryService {
         String clickValue = update.getCallbackQuery().getData();
         Integer messageId = update.getCallbackQuery().getMessage().getMessageId();
         Subscriber user = redisCash.find(USER_STATE, update.getCallbackQuery().getFrom().getId(), Subscriber.class);
-        EditMessageText msg = null;
-        if (verification.contains(clickValue) || clickValue.equals(SAVE_VERIFICATION.getValue())) {
-            msg = workWithVerification(user, clickValue, messageId);
-        }
-        return msg;
-    }
-
-    private EditMessageText workWithVerification(Subscriber user, String clickValue, Integer messageId) {
         EditMessageText editMsg = null;
         if(SAVE_VERIFICATION.getValue().equals(clickValue)) {
             redisCash.save(user, null);
@@ -48,9 +40,9 @@ public class CallbackQueryService {
         } else if(EMAIL_NOTIFICATION.getValue().equals(clickValue)){
             editMsg = BotState.EMAIL_NOTIFICATION.sendMessage(user, crudService.find(user), messageId);
         } else {
-            Email emailForDelete = crudService.find(Email.class, Collections.singletonMap(Email.Fields.email, clickValue)).stream().findFirst().orElse(null);
+            Email emailForDelete = crudService.find(Email.class, Collections.singletonMap(Email.Fields.email, clickValue), null).stream().findFirst().orElse(null);
             crudService.delete(emailForDelete, Email.class);
-            return BotState.EMAIL_NOTIFICATION.sendMessage(user, crudService.find(user), messageId);
+            editMsg = BotState.EMAIL_NOTIFICATION.sendMessage(user, crudService.find(user), messageId);
         }
         redisCash.save(user);
         return editMsg;
@@ -61,10 +53,10 @@ public class CallbackQueryService {
         String click = update.getCallbackQuery().getData();
         SendDocument sendDoc = null;
         if (VERIFICATION_SHOW.getValue().equals(click)) {
-            List<Equipment> equipment = crudService.find(Equipment.class, Collections.singletonMap(Equipment.Fields.userId, user.getId()));
+            List<Equipment> equipment = crudService.find(Equipment.class, Collections.singletonMap(Equipment.Fields.userId, user.getId()), null);
             sendDoc = BotState.VERIFICATION_SHOW.sendMessage(user, ExcelServiceWrite.writeDataToExcel(equipment));
         } else if (VERIFICATION_UPDATE.getValue().equals(click)) {
-            List<ExcelRequest> excelRequests = crudService.find(Equipment.class, Collections.singletonMap(Equipment.Fields.userId, user.getId()))
+            List<ExcelRequest> excelRequests = crudService.find(Equipment.class, Collections.singletonMap(Equipment.Fields.userId, user.getId()), null)
                     .stream().map(e -> crudService.toMap(ExcelRequest.class, e)).toList();
             sendDoc = BotState.VERIFICATION_UPDATE.sendMessage(user, ExcelServiceWrite.writeDataToExcel(excelRequests));
         } else {

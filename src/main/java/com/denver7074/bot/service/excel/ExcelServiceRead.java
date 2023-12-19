@@ -9,7 +9,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -17,10 +16,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
-import static java.util.Collections.singletonMap;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 
@@ -53,7 +52,7 @@ public class ExcelServiceRead {
                 Equipment eq = crudService.find(Equipment.class, Map.of(Equipment.Fields.userId, user.getId(),
                         Equipment.Fields.mitNumber, ex.getMitNumber(),
                         Equipment.Fields.number, ex.getNumber()
-                )).stream().findFirst().orElse(null);
+                ), null).stream().findFirst().orElse(null);
                 workWithFile(user, eq, ex);
             }
         }
@@ -64,7 +63,7 @@ public class ExcelServiceRead {
             modelMapper.map(ex, eq);
             crudService.update(eq, eq.getId(), Equipment.class);
         } else if (user.getBotState().equals(BotState.VERIFICATION_FIND) && isEmpty(eq)) {
-            Equipment lastVerification = verificationService.findLastVerification(user, ex.getMitNumber(), ex.getNumber());
+            Equipment lastVerification = verificationService.findLastVerification(user.getId(), ex.getMitNumber(), ex.getNumber());
             crudService.create(lastVerification);
         }
     }

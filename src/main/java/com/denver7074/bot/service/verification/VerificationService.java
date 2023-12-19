@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -44,12 +43,12 @@ public class VerificationService {
     Verification verification;
 
 
-    public Equipment findLastVerification(Subscriber user, String mitnumber, String number) {
+    public Equipment findLastVerification(Long userId, String mitnumber, String number) {
         List<Equipment> list = new ArrayList<>();
         if (openfeign)  list.addAll(findLastVerificationWithFeignClient(mitnumber, number));
         else list.addAll(findLastVerification(mitnumber, number));
         Equipment eq = list.stream().findFirst().orElse(null);
-        if (isNotEmpty(eq)) eq.setUserId(user.getId());
+        if (isNotEmpty(eq)) eq.setUserId(userId);
         return eq;
     }
 

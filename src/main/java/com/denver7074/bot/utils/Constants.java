@@ -1,8 +1,6 @@
 package com.denver7074.bot.utils;
 
 
-import org.springframework.beans.factory.annotation.Value;
-
 import java.util.List;
 
 public final class Constants {
@@ -16,5 +14,5 @@ public final class Constants {
 
     public final static String FGIS_ARCHIN = "https://fgis.gost.ru/fundmetrology/cm/results/";
 
-    public final static String NO_EMAIL = "\nНет подключенных email адресов.";
+    public final static String FORMAT_FILE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 }

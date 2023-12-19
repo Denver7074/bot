@@ -32,6 +32,7 @@ dependencies {
 	implementation 'org.telegram:telegrambots:6.3.0'
 	implementation 'org.modelmapper:modelmapper:3.2.0'
 	implementation 'net.javacrumbs.shedlock:shedlock-spring:5.10.2'
+	implementation 'org.springframework.boot:spring-boot-starter-mail:3.2.0'
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 	//work with bd
 	implementation 'org.postgresql:postgresql'

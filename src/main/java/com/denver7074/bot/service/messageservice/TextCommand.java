@@ -7,20 +7,17 @@ import com.denver7074.bot.model.Subscriber;
 import com.denver7074.bot.service.CrudService;
 import com.denver7074.bot.service.verification.VerificationService;
 import com.denver7074.bot.utils.RedisCash;
-import com.denver7074.bot.utils.Utils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 
 import java.util.List;
 
 import static com.denver7074.bot.model.BotState.*;
-import static com.denver7074.bot.utils.Constants.USER_STATE;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 

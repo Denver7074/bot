@@ -1,17 +1,17 @@
 package com.denver7074.bot.model;
 
 import com.denver7074.bot.service.response.SendMsg;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.apache.commons.lang3.ObjectUtils;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -45,7 +45,9 @@ public enum BotState {
     SAVE_VERIFICATION("%s \n Нажмите \"Поставить на контроль\" если хотите получать оповещения о необходимости поверки или продолжайте ручной поиск." +
             "\n Пример ввода: 51124-12 191"),
     VERIFICATION_SAVE("СИ поставленно на контроль. Выберите дальнейшую команд из меню или продолжайте поиск." +
-                      "\n Пример ввода: 51124-12 191");
+                      "\n Пример ввода: 51124-12 191"),
+    VERIFICATION_FINISH("Срок поверки истекает у следующих СИ. Сдайте на поверку, если ещё не сдали.");
+
 
     public static final EnumSet<BotState> botStates = EnumSet.of(
             VERIFICATION_FIND, SAVE_VERIFICATION, EMAIL_NOTIFICATION

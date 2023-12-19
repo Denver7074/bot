@@ -3,32 +3,28 @@ package com.denver7074.bot.service;
 import com.denver7074.bot.model.Email;
 import com.denver7074.bot.model.Subscriber;
 import com.denver7074.bot.model.common.IdentityEntity;
-import com.denver7074.bot.utils.RedisCash;
 import com.denver7074.bot.utils.Utils;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
-import jakarta.persistence.criteria.*;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.apache.commons.lang3.BooleanUtils;
 import org.modelmapper.ModelMapper;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.util.CastUtils;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
+import java.time.LocalDate;
 import java.util.*;
 
-import static com.denver7074.bot.utils.Constants.NO_EMAIL;
 import static com.denver7074.bot.utils.Errors.E001;
 import static java.util.Collections.emptyList;
+import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 
 @Service
@@ -77,7 +73,8 @@ public class CrudService {
         return CastUtils.cast(target);
     }
 
-    public <E> List<E> find(Class<E> clazz, Map<String, Object> filter) {
+    //можно ещё поработать над фильтрами и сортировками
+    public <E> List<E> find(Class<E> clazz, Map<String, Object> filter, Pair<String, LocalDate> dateAfter) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<E> query = cb.createQuery(clazz);
         Root<E> root = query.from(clazz);
@@ -86,6 +83,9 @@ public class CrudService {
             String field = entry.getKey();
             Object value = entry.getValue();
             predicates.add(cb.equal(root.get(field), value));
+        }
+        if (nonNull(dateAfter)) {
+            predicates.add(cb.lessThanOrEqualTo(root.get(dateAfter.getFirst()), dateAfter.getSecond()));
         }
         query.where(predicates.toArray(new Predicate[0]));
         return entityManager.createQuery(query).getResultList();
@@ -97,7 +97,7 @@ public class CrudService {
     }
 
     public List<String> findButtonEmail(Subscriber user) {
-        return find(Email.class, Collections.singletonMap(Email.Fields.userId, user.getId()))
+        return find(Email.class, Collections.singletonMap(Email.Fields.userId, user.getId()), null)
                 .stream()
                 .map(Email::getEmail)
                 .toList();
