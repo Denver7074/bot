@@ -61,7 +61,7 @@ public class ExcelServiceRead {
     private void workWithFile(Subscriber user, Equipment eq, ExcelRequest ex) {
         if (user.getBotState().equals(BotState.VERIFICATION_UPDATE) && isNotEmpty(eq)) {
             modelMapper.map(ex, eq);
-            crudService.update(eq, eq.getId(), Equipment.class);
+            crudService.update(user.getId(), eq, eq.getId(), Equipment.class);
         } else if (user.getBotState().equals(BotState.VERIFICATION_FIND) && isEmpty(eq)) {
             Equipment lastVerification = verificationService.findLastVerification(user.getId(), ex.getMitNumber(), ex.getNumber());
             crudService.create(lastVerification);

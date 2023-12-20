@@ -45,7 +45,7 @@ public class TextCommand {
         switch (command) {
             case "/start"-> sendMsg = SHOW_START_MENU.sendMessage(user, emptyList(), user.getFirstName());
             case "/help" -> sendMsg = SHOW_HELP_MENU.sendMessage(user, emptyList());
-            case "/verification"-> sendMsg = BotState.WORK_WITH_VERIFICATION.sendMessage(user, BotButton.verification);
+            case "/verification"-> sendMsg = BotState.WORK_WITH_VERIFICATION.sendMessage(user, BotButton.verification.keySet());
             case "/profile"-> sendMsg = BotState.ABOUT_ME.sendMessage(user, emptyList(), user.toString());
             default -> sendMsg = sendFromBotState(command, user);
         };
@@ -56,7 +56,7 @@ public class TextCommand {
     private SendMessage sendFromBotState(String command, Subscriber user) {
         SendMessage sendMsg = null;
         switch (user.getBotState()) {
-            case VERIFICATION_FIND, SAVE_VERIFICATION->  sendMsg = SAVE_VERIFICATION.sendMessage(user, List.of(BotButton.SAVE_VERIFICATION.getValue()), service.findLastVerification(user, command).toString());
+            case VERIFICATION_FIND, SAVE_VERIFICATION-> sendMsg = SAVE_VERIFICATION.sendMessage(user, List.of(BotButton.SAVE_VERIFICATION.getValue()), service.findLastVerification(user, command).toString());
             case EMAIL_NOTIFICATION ->  {
                 crudService.create(new Email().setEmail(command).setUserId(user.getId()));
                 sendMsg = EMAIL_NOTIFICATION.sendMessage(user, crudService.find(user));

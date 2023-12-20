@@ -8,15 +8,16 @@ import com.denver7074.bot.utils.RedisCash;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 
 import static com.denver7074.bot.model.BotButton.*;
-import static com.denver7074.bot.model.BotButton.VERIFICATION_UPDATE;
 import static com.denver7074.bot.model.BotState.VERIFICATION_SAVE;
 import static com.denver7074.bot.utils.Constants.USER_STATE;
 import static java.util.Collections.emptyList;
@@ -31,18 +32,22 @@ public class CallbackQueryService {
 
     public EditMessageText handleCallbackText(Update update) {
         String clickValue = update.getCallbackQuery().getData();
+        BotButton botButton = verification.get(clickValue);
+        if(ObjectUtils.isEmpty(botButton)) botButton = SAVE_VERIFICATION;
         Integer messageId = update.getCallbackQuery().getMessage().getMessageId();
         Subscriber user = redisCash.find(USER_STATE, update.getCallbackQuery().getFrom().getId(), Subscriber.class);
         EditMessageText editMsg = null;
-        if(SAVE_VERIFICATION.getValue().equals(clickValue)) {
-            redisCash.save(user, null);
-            editMsg = VERIFICATION_SAVE.sendMessage(user, emptyList(), messageId);
-        } else if(EMAIL_NOTIFICATION.getValue().equals(clickValue)){
-            editMsg = BotState.EMAIL_NOTIFICATION.sendMessage(user, crudService.find(user), messageId);
-        } else {
-            Email emailForDelete = crudService.find(Email.class, Collections.singletonMap(Email.Fields.email, clickValue), null).stream().findFirst().orElse(null);
-            crudService.delete(emailForDelete, Email.class);
-            editMsg = BotState.EMAIL_NOTIFICATION.sendMessage(user, crudService.find(user), messageId);
+        switch (botButton) {
+            case SAVE_VERIFICATION -> {
+                redisCash.save(user, null);
+                editMsg = VERIFICATION_SAVE.sendMessage(user, emptyList(), messageId);
+            }
+            case EMAIL_NOTIFICATION -> editMsg = BotState.EMAIL_NOTIFICATION.sendMessage(user, crudService.find(user), messageId);
+            default -> {
+                Email emailForDelete = crudService.find(Email.class, Collections.singletonMap(Email.Fields.email, clickValue), null).stream().findFirst().orElse(null);
+                crudService.delete(emailForDelete, Email.class);
+                editMsg = BotState.EMAIL_NOTIFICATION.sendMessage(user, crudService.find(user), messageId);
+            }
         }
         redisCash.save(user);
         return editMsg;
@@ -50,18 +55,22 @@ public class CallbackQueryService {
 
     public SendDocument getFile(Update update) {
         Subscriber user = redisCash.find(USER_STATE, update.getCallbackQuery().getFrom().getId(), Subscriber.class);
-        String click = update.getCallbackQuery().getData();
+        BotButton botButton = showAndUpdate.get(update.getCallbackQuery().getData());
         SendDocument sendDoc = null;
-        if (VERIFICATION_SHOW.getValue().equals(click)) {
-            List<Equipment> equipment = crudService.find(Equipment.class, Collections.singletonMap(Equipment.Fields.userId, user.getId()), null);
-            sendDoc = BotState.VERIFICATION_SHOW.sendMessage(user, ExcelServiceWrite.writeDataToExcel(equipment));
-        } else if (VERIFICATION_UPDATE.getValue().equals(click)) {
-            List<ExcelRequest> excelRequests = crudService.find(Equipment.class, Collections.singletonMap(Equipment.Fields.userId, user.getId()), null)
-                    .stream().map(e -> crudService.toMap(ExcelRequest.class, e)).toList();
-            sendDoc = BotState.VERIFICATION_UPDATE.sendMessage(user, ExcelServiceWrite.writeDataToExcel(excelRequests));
-        } else {
-            redisCash.save(user, null);
-            sendDoc = BotState.VERIFICATION_FIND.sendMessage(user, ExcelServiceWrite.writeDataToExcel(emptyList()));
+        switch (botButton) {
+            case VERIFICATION_SHOW -> {
+                List<Equipment> equipment = crudService.find(Equipment.class, Collections.singletonMap(Equipment.Fields.userId, user.getId()), null);
+                sendDoc = BotState.VERIFICATION_SHOW.sendMessage(user, ExcelServiceWrite.writeDataToExcel(equipment));
+            }
+            case VERIFICATION_UPDATE -> {
+                List<ExcelRequest> excelRequests = crudService.find(Equipment.class, Collections.singletonMap(Equipment.Fields.userId, user.getId()), null)
+                        .stream().map(e -> crudService.toMap(ExcelRequest.class, e)).toList();
+                sendDoc = BotState.VERIFICATION_UPDATE.sendMessage(user, ExcelServiceWrite.writeDataToExcel(excelRequests));
+            }
+            default -> {
+                redisCash.save(user, null);
+                sendDoc = BotState.VERIFICATION_FIND.sendMessage(user, ExcelServiceWrite.writeDataToExcel(emptyList()));
+            }
         }
         redisCash.save(user);
         return sendDoc;

@@ -5,18 +5,21 @@ import com.denver7074.bot.model.Equipment;
 import com.denver7074.bot.service.excel.ExcelServiceWrite;
 import com.denver7074.bot.service.response.SendMsg;
 import com.denver7074.bot.service.verification.VerificationService;
-import jakarta.annotation.PostConstruct;
+import com.denver7074.bot.utils.RedisCash;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.util.Pair;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyMap;
@@ -27,14 +30,14 @@ import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class ShedullerService {
 
+    RedisCash redisCash;
     CrudService crudService;
     TelegramBot telegramBot;
     MailService mailService;
     VerificationService verificationService;
 
     @SneakyThrows
-    @PostConstruct
-//    @Scheduled(cron = "${cron.finishVerification}")
+    @Scheduled(cron = "${cron.finish.verification}")
     public void notificationFinishVerification() {
         Map<Long, List<Equipment>> equipmentMap = crudService
                 .find(Equipment.class, emptyMap(), Pair.of(Equipment.Fields.validDate, LocalDate.now().plusDays(30)))
@@ -46,7 +49,7 @@ public class ShedullerService {
                 Equipment equipment = eq.get(i);
                 Equipment lastVerification = verificationService.findLastVerification(key, equipment.getMitNumber(), equipment.getNumber());
                 if (lastVerification.getValidDate().isAfter(equipment.getValidDate())) {
-                    crudService.update(lastVerification, equipment.getId(), Equipment.class);
+                    crudService.update(key, lastVerification, equipment.getId(), Equipment.class);
                     eq.remove(i);
                 }
             }
@@ -65,4 +68,5 @@ public class ShedullerService {
         mailService.emailNotification(equipmentMap, message);
         telegramBot.notification(sendDocs);
     }
+
 }

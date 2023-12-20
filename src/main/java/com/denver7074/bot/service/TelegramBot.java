@@ -4,6 +4,7 @@ import com.denver7074.bot.configuration.BotConfig;
 import com.denver7074.bot.model.BotButton;
 import com.denver7074.bot.service.messageservice.CallbackQueryService;
 import com.denver7074.bot.service.messageservice.FileMessageService;
+import com.denver7074.bot.service.messageservice.invoice.InvoiceService;
 import com.denver7074.bot.service.messageservice.TextCommand;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
@@ -26,8 +28,9 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     BotConfig botConfig;
     TextCommand textCommand;
-    CallbackQueryService callbackQueryService;
+    InvoiceService invoiceService;
     FileMessageService fileMessageService;
+    CallbackQueryService callbackQueryService;
 
     @SneakyThrows
     public void telegramBot() {
@@ -58,7 +61,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 execute(fileMessageService.handleUpdateText(update));
             }
         } else if (update.hasCallbackQuery()) {
-            if (BotButton.showAndUpdate.contains(update.getCallbackQuery().getData())) execute(callbackQueryService.getFile(update));
+            if (BotButton.showAndUpdate.containsKey(update.getCallbackQuery().getData())) execute(callbackQueryService.getFile(update));
             else execute(callbackQueryService.handleCallbackText(update));
         }
     }
@@ -68,5 +71,10 @@ public class TelegramBot extends TelegramLongPollingBot {
         for (SendDocument doc : sendDocs) {
             execute(doc);
         }
+    }
+
+    @SneakyThrows
+    public void error(SendMessage sendMessage) {
+        execute(sendMessage);
     }
 }

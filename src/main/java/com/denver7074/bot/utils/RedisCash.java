@@ -3,21 +3,17 @@ package com.denver7074.bot.utils;
 import com.denver7074.bot.model.Equipment;
 import com.denver7074.bot.model.Subscriber;
 import com.denver7074.bot.service.CrudService;
-import com.denver7074.bot.service.verification.Verification;
 import jakarta.annotation.PostConstruct;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.server.DelegatingServerHttpResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
 import static com.denver7074.bot.utils.Constants.USER_STATE;
 import static com.denver7074.bot.utils.Constants.VERIFICATION;
-import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 
 
@@ -43,18 +39,18 @@ public class RedisCash {
 
     public Subscriber save(Subscriber source) {
         save(USER_STATE, source.getId(), source);
-        return crudService.update(source, source.getId(), Subscriber.class);
+        return crudService.update(source.getId(), source, source.getId(), Subscriber.class);
     }
 
-    // Сначала сохраняем в кэш, а потом, если нормально, то сохраняем в бд
+    // Сначала сохраняем в кэш, а потом, если пользователь подтверждает сохранение, то сохраняем в бд
     public void save(Subscriber user, Equipment eq) {
         Equipment equipment = Utils.safeGet(() -> find(VERIFICATION, user.getId(), Equipment.class));
-        if (isEmpty(equipment)) {
-            save(VERIFICATION, user.getId(), eq);
-        } else {
+        if (isNotEmpty(equipment)) {
             equipment.setUserId(user.getId());
             crudService.create(equipment);
             delete(VERIFICATION, user.getId());
+        } else {
+            save(VERIFICATION, user.getId(), eq);
         }
     }
 

@@ -22,7 +22,7 @@ import org.springframework.util.ObjectUtils;
 import java.time.LocalDate;
 import java.util.*;
 
-import static com.denver7074.bot.utils.Errors.E001;
+import static com.denver7074.bot.utils.errors.Errors.E001;
 import static java.util.Collections.emptyList;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
@@ -40,17 +40,8 @@ public class CrudService {
         return Utils.safeGet(() -> modelMapper.map(dto, clazz));
     }
 
-    public <E, ID> E find(Class<E> clazz, ID id) {
-        return Optional.ofNullable(entityManager.find(clazz, id))
-                .orElseThrow(() -> E001.thr(clazz.getSimpleName(), id));
-    }
-
     public <E, ID> E findNullable(Class<E> clazz, ID id) {
         return Optional.ofNullable(entityManager.find(clazz, id)).orElse(null);
-    }
-
-    public <E> List<E> findAll(Class<E> clazz) {
-        return entityManager.createQuery("select e from " + clazz.getSimpleName() + " e where e.id is not null ",clazz).getResultList();
     }
 
     public <E, D> E create(D dto, Class<E> clazz) {
@@ -65,9 +56,9 @@ public class CrudService {
         return CastUtils.cast(merge);
     }
 
-
-    public <E, D> E update(D source, Long id, Class<E> clazz) {
-        E target = find(clazz, id);
+    public <E, D> E update(Long userId, D source, Long id, Class<E> clazz) {
+        E target = findNullable(clazz, id);
+        E001.thr(isEmpty(target), userId, clazz.getSimpleName(), id);
         modelMapper.map(source, target);
         entityManager.persist(target);
         return CastUtils.cast(target);

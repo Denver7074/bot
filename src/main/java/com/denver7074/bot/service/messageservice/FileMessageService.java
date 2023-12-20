@@ -45,7 +45,7 @@ public class FileMessageService {
 
     public SendDocument handleUpdateText(Update update) {
         Subscriber user = safeGet(() -> redisCash.find(USER_STATE, update.getMessage().getFrom().getId(), Subscriber.class));
-        excelServiceRead.readExcel(loadFile(update), user);
+        excelServiceRead.readExcel(new ByteArrayInputStream(loadFile(update)), user);
         List<Equipment> equipment = crudService.find(Equipment.class, Collections.singletonMap(Equipment.Fields.userId, user.getId()), null);
         SendDocument sendDocument = BotState.VERIFICATION_SHOW.sendMessage(user, ExcelServiceWrite.writeDataToExcel(equipment));
         redisCash.save(user);
@@ -53,7 +53,7 @@ public class FileMessageService {
     }
 
     @SneakyThrows
-    private ByteArrayInputStream loadFile(Update update) {
+    public byte[] loadFile(Update update) {
         String fileId = update.getMessage().getDocument().getFileId();
         URL url = new URL(FILE_INFO_URI + fileId);
         BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
@@ -63,7 +63,7 @@ public class FileMessageService {
         String filePath = path.getString("file_path");
         try (InputStream is = new URL(fileStorageUri + filePath).openStream()) {
             br.close();
-            return new ByteArrayInputStream(IOUtils.toByteArray(is));
+            return IOUtils.toByteArray(is);
         }
     }
 }
