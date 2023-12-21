@@ -34,6 +34,7 @@ dependencies {
 	implementation 'net.javacrumbs.shedlock:shedlock-spring:5.10.2'
 	implementation 'org.springframework.boot:spring-boot-starter-mail:3.2.0'
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+	implementation 'org.springframework.cloud:spring-cloud-starter-vault-config'
 	//work with bd
 	implementation 'org.postgresql:postgresql'
 	implementation 'org.flywaydb:flyway-core:9.21.0'
@@ -50,6 +51,10 @@ dependencies {
 	//work with excel
 	implementation 'org.apache.poi:poi:5.2.5'
 	implementation 'org.apache.poi:poi-ooxml:5.2.5'
+	//for log
+	implementation 'ch.qos.logback.contrib:logback-json-classic:0.1.5'
+	implementation 'ch.qos.logback.contrib:logback-jackson:0.1.5'
+	implementation 'ch.qos.logback:logback-classic:1.4.7'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }

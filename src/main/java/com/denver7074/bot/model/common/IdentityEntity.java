@@ -20,6 +20,7 @@ public abstract class IdentityEntity implements ReachableDTO{
 
     @Override
     public IdentityEntity reach(CrudService crudService) {
+        validate(crudService);
         return this;
     }
 }

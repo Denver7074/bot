@@ -23,6 +23,6 @@ public class ErrorAnswer {
 
     @AfterThrowing(pointcut = "@annotation(ToThrow)", throwing = "exception")
     public void handleException(Errors.CustomException exception) {
-        telegramBot.error(new SendMsg(exception.getMsg(), exception.getUserId(), emptyList()).getMsg());
+        telegramBot.error(new SendMsg(exception.getMsg(), exception.getUserId(), exception.getBotButton()).getMsg());
     }
 }

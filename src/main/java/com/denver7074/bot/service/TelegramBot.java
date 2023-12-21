@@ -4,8 +4,8 @@ import com.denver7074.bot.configuration.BotConfig;
 import com.denver7074.bot.model.BotButton;
 import com.denver7074.bot.service.messageservice.CallbackQueryService;
 import com.denver7074.bot.service.messageservice.FileMessageService;
-import com.denver7074.bot.service.messageservice.invoice.InvoiceService;
 import com.denver7074.bot.service.messageservice.TextCommand;
+import com.denver7074.bot.service.messageservice.invoice.InvoiceService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -43,12 +43,12 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
     @Override
     public String getBotUsername() {
-        return botConfig.getName();
+        return botConfig.getBotName();
     }
 
     @Override
     public String getBotToken() {
-        return botConfig.getToken();
+        return botConfig.getBotToken();
     }
 
     @Override

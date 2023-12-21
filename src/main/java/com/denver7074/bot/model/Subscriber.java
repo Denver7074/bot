@@ -28,8 +28,6 @@ public class Subscriber implements Serializable {
     @Enumerated(EnumType.STRING)
     BotState botState = BotState.SHOW_START_MENU;
     String firstName;
-    Integer countEquipment = 0;
-    Integer dayMailing = 30;
     Boolean deleted = Boolean.FALSE;
     @CreatedDate
     LocalDate registration;
@@ -40,11 +38,6 @@ public class Subscriber implements Serializable {
     public String toString() {
         return  "id: " + id + "\n" +
                 "имя: " + firstName + "\n" +
-                "количество приборов: " + countEquipment + "\n" +
                 "дата регистрации в боте: " + Utils.convertDate(registration);
     }
-//    @OneToMany(mappedBy = "user")
-//    List<Email> emailList = new ArrayList<>();
-
-
 }

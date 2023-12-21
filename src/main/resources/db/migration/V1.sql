@@ -3,8 +3,6 @@ create table if not exists subscriber
     id              bigserial primary key,
     bot_state       varchar(50),
     first_name      varchar(100),
-    count_equipment int   not null,
-    day_mailing     int   not null,
     deleted         boolean   not null,
     registration    timestamp not null,
     activity        timestamp

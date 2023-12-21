@@ -4,6 +4,7 @@ import com.denver7074.bot.model.Email;
 import com.denver7074.bot.model.Subscriber;
 import com.denver7074.bot.model.common.IdentityEntity;
 import com.denver7074.bot.utils.Utils;
+import com.denver7074.bot.utils.errors.ToThrow;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -50,15 +51,17 @@ public class CrudService {
     }
 
 
+    @ToThrow
     public <E extends IdentityEntity> E create(E entity) {
         IdentityEntity reach = entity.reach(this);
         IdentityEntity merge = entityManager.merge(reach);
         return CastUtils.cast(merge);
     }
 
+    @ToThrow
     public <E, D> E update(Long userId, D source, Long id, Class<E> clazz) {
         E target = findNullable(clazz, id);
-        E001.thr(isEmpty(target), userId, clazz.getSimpleName(), id);
+        E001.thr(isEmpty(target), userId, emptyList(), clazz.getSimpleName(), id);
         modelMapper.map(source, target);
         entityManager.persist(target);
         return CastUtils.cast(target);
@@ -83,12 +86,12 @@ public class CrudService {
     }
 
     public List<String> find(Subscriber user) {
-        List<String> buttonEmail = Utils.safeGet(() -> findButtonEmail(user));
+        List<String> buttonEmail = Utils.safeGet(() -> findButtonEmail(user.getId()));
         return isEmpty(buttonEmail) ? emptyList() : buttonEmail;
     }
 
-    public List<String> findButtonEmail(Subscriber user) {
-        return find(Email.class, Collections.singletonMap(Email.Fields.userId, user.getId()), null)
+    public List<String> findButtonEmail(Long userId) {
+        return find(Email.class, Collections.singletonMap(Email.Fields.userId, userId), null)
                 .stream()
                 .map(Email::getEmail)
                 .toList();

@@ -1,5 +1,6 @@
 package com.denver7074.bot.service.messageservice;
 
+import com.denver7074.bot.configuration.BotConfig;
 import com.denver7074.bot.model.BotState;
 import com.denver7074.bot.model.Equipment;
 import com.denver7074.bot.model.Subscriber;
@@ -31,17 +32,13 @@ import static com.denver7074.bot.utils.Utils.safeGet;
 
 @Service
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class FileMessageService {
 
-    final RedisCash redisCash;
-    final CrudService crudService;
-    final ExcelServiceRead excelServiceRead;
-    @Value("${service.file_info.uri}")
-    private String FILE_INFO_URI;
-    @Value("${service.file_storage.uri}")
-    private String fileStorageUri;
-
+    RedisCash redisCash;
+    CrudService crudService;
+    ExcelServiceRead excelServiceRead;
+    BotConfig botConfig;
 
     public SendDocument handleUpdateText(Update update) {
         Subscriber user = safeGet(() -> redisCash.find(USER_STATE, update.getMessage().getFrom().getId(), Subscriber.class));
@@ -55,13 +52,13 @@ public class FileMessageService {
     @SneakyThrows
     public byte[] loadFile(Update update) {
         String fileId = update.getMessage().getDocument().getFileId();
-        URL url = new URL(FILE_INFO_URI + fileId);
+        URL url = new URL(botConfig.getFileInfo() + fileId);
         BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
         String getFile = br.readLine();
         JSONObject jsonObject = new JSONObject(getFile);
         JSONObject path = jsonObject.getJSONObject("result");
         String filePath = path.getString("file_path");
-        try (InputStream is = new URL(fileStorageUri + filePath).openStream()) {
+        try (InputStream is = new URL(botConfig.getFileStore() + filePath).openStream()) {
             br.close();
             return IOUtils.toByteArray(is);
         }

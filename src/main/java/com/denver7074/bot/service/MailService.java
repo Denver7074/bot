@@ -1,5 +1,6 @@
 package com.denver7074.bot.service;
 
+import com.denver7074.bot.configuration.BotConfig;
 import com.denver7074.bot.model.Email;
 import com.denver7074.bot.model.Equipment;
 import com.denver7074.bot.service.excel.ExcelServiceWrite;
@@ -22,13 +23,12 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class MailService {
 
-    final CrudService crudService;
-    final JavaMailSender mailSender;
-    @Value("${spring.mail.username}")
-    String EMAIL_FROM;
+    BotConfig botConfig;
+    CrudService crudService;
+    JavaMailSender mailSender;
 
 
     public void emailNotification(Map<Long, List<Equipment>> equipmentMap, String message) {
@@ -45,12 +45,12 @@ public class MailService {
     //формат файла не работает
     @SneakyThrows
     private void mimeMessage(List<String> emailTo, String text, List<Equipment> equipment) {
-        try (InputStream inputStream = ExcelServiceWrite.writeDataToExcel(equipment);) {
+        try (InputStream inputStream = ExcelServiceWrite.writeDataToExcel(equipment)) {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper message = new MimeMessageHelper(mimeMessage, true);
 
             String[] array =  emailTo.toArray(new String[0]);
-            message.setFrom(EMAIL_FROM);
+            message.setFrom(botConfig.getUserName());
             message.setTo(array);
             message.setSubject("На поверку");
             message.setText(text);

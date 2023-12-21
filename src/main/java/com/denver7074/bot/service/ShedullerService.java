@@ -5,7 +5,7 @@ import com.denver7074.bot.model.Equipment;
 import com.denver7074.bot.service.excel.ExcelServiceWrite;
 import com.denver7074.bot.service.response.SendMsg;
 import com.denver7074.bot.service.verification.VerificationService;
-import com.denver7074.bot.utils.RedisCash;
+import jakarta.annotation.PostConstruct;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -30,13 +30,13 @@ import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class ShedullerService {
 
-    RedisCash redisCash;
     CrudService crudService;
     TelegramBot telegramBot;
     MailService mailService;
     VerificationService verificationService;
 
     @SneakyThrows
+//    @PostConstruct
     @Scheduled(cron = "${cron.finish.verification}")
     public void notificationFinishVerification() {
         Map<Long, List<Equipment>> equipmentMap = crudService
@@ -50,7 +50,7 @@ public class ShedullerService {
                 Equipment lastVerification = verificationService.findLastVerification(key, equipment.getMitNumber(), equipment.getNumber());
                 if (lastVerification.getValidDate().isAfter(equipment.getValidDate())) {
                     crudService.update(key, lastVerification, equipment.getId(), Equipment.class);
-                    eq.remove(i);
+//                    eq.remove(i);
                 }
             }
             if (isEmpty(eq)) equipmentMap.remove(key);

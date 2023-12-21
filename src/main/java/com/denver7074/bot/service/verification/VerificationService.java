@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
+import org.hibernate.sql.ast.tree.expression.Collation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -20,14 +21,12 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.denver7074.bot.utils.Constants.SORT;
 import static com.denver7074.bot.utils.errors.Errors.E002;
 import static com.denver7074.bot.utils.errors.Errors.E004;
+import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 
@@ -60,13 +59,13 @@ public class VerificationService {
     @ToThrow
     public Equipment findLastVerification(Subscriber user, String command) {
         Equipment equipment = findLastVerification(command).stream().findFirst().orElse(null);
-        E002.thr(isEmpty(equipment), user.getId(), command);
+        E002.thr(isEmpty(equipment), user.getId(), emptyList(), command);
         List<Equipment> equipments = crudService.find(Equipment.class, Map.of(
                 Equipment.Fields.userId, user.getId(),
                 Equipment.Fields.mitNumber, equipment.getMitNumber(),
                 Equipment.Fields.number, equipment.getNumber()
         ), null);
-        E004.thr(isNotEmpty(equipments), user.getId(), equipment);
+        E004.thr(isNotEmpty(equipments), user.getId(), emptyList(), equipment);
         redisCash.save(user, equipment);
         return equipment;
     }

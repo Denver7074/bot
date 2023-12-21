@@ -5,10 +5,10 @@ import com.denver7074.bot.service.CrudService;
 import com.denver7074.bot.service.excel.ExcelRequest;
 import com.denver7074.bot.service.excel.ExcelServiceWrite;
 import com.denver7074.bot.utils.RedisCash;
+import com.denver7074.bot.utils.errors.ToThrow;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
@@ -20,7 +20,9 @@ import java.util.List;
 import static com.denver7074.bot.model.BotButton.*;
 import static com.denver7074.bot.model.BotState.VERIFICATION_SAVE;
 import static com.denver7074.bot.utils.Constants.USER_STATE;
+import static com.denver7074.bot.utils.errors.Errors.E005;
 import static java.util.Collections.emptyList;
+import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +35,7 @@ public class CallbackQueryService {
     public EditMessageText handleCallbackText(Update update) {
         String clickValue = update.getCallbackQuery().getData();
         BotButton botButton = verification.get(clickValue);
-        if(ObjectUtils.isEmpty(botButton)) botButton = SAVE_VERIFICATION;
+        if(isEmpty(botButton)) botButton = SAVE_VERIFICATION;
         Integer messageId = update.getCallbackQuery().getMessage().getMessageId();
         Subscriber user = redisCash.find(USER_STATE, update.getCallbackQuery().getFrom().getId(), Subscriber.class);
         EditMessageText editMsg = null;
@@ -53,18 +55,18 @@ public class CallbackQueryService {
         return editMsg;
     }
 
+    @ToThrow
     public SendDocument getFile(Update update) {
         Subscriber user = redisCash.find(USER_STATE, update.getCallbackQuery().getFrom().getId(), Subscriber.class);
         BotButton botButton = showAndUpdate.get(update.getCallbackQuery().getData());
         SendDocument sendDoc = null;
         switch (botButton) {
             case VERIFICATION_SHOW -> {
-                List<Equipment> equipment = crudService.find(Equipment.class, Collections.singletonMap(Equipment.Fields.userId, user.getId()), null);
+                List<Equipment> equipment = find(user);
                 sendDoc = BotState.VERIFICATION_SHOW.sendMessage(user, ExcelServiceWrite.writeDataToExcel(equipment));
             }
             case VERIFICATION_UPDATE -> {
-                List<ExcelRequest> excelRequests = crudService.find(Equipment.class, Collections.singletonMap(Equipment.Fields.userId, user.getId()), null)
-                        .stream().map(e -> crudService.toMap(ExcelRequest.class, e)).toList();
+                List<ExcelRequest> excelRequests = find(user).stream().map(e -> crudService.toMap(ExcelRequest.class, e)).toList();
                 sendDoc = BotState.VERIFICATION_UPDATE.sendMessage(user, ExcelServiceWrite.writeDataToExcel(excelRequests));
             }
             default -> {
@@ -74,6 +76,13 @@ public class CallbackQueryService {
         }
         redisCash.save(user);
         return sendDoc;
+    }
+
+
+    private List<Equipment> find(Subscriber user) {
+        List<Equipment> equipment = crudService.find(Equipment.class, Collections.singletonMap(Equipment.Fields.userId, user.getId()), null);
+        E005.thr(isEmpty(equipment), user.getId(), verification.keySet());
+        return equipment;
     }
 
 }
