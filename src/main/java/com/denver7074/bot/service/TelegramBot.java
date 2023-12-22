@@ -12,6 +12,7 @@ import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -19,6 +20,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Component
@@ -52,29 +54,26 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     @Override
-    @SneakyThrows
     public void onUpdateReceived(Update update) {
         if (update.hasMessage()) {
             if (update.getMessage().hasText()) {
-                execute(textCommand.handleUpdateText(update));
+                send(textCommand.handleUpdateText(update));
             } else if (update.getMessage().hasDocument()) {
-                execute(fileMessageService.handleUpdateText(update));
+                sendDoc(fileMessageService.handleUpdateText(update));
             }
         } else if (update.hasCallbackQuery()) {
-            if (BotButton.showAndUpdate.containsKey(update.getCallbackQuery().getData())) execute(callbackQueryService.getFile(update));
-            else execute(callbackQueryService.handleCallbackText(update));
+            if (BotButton.showAndUpdate.containsKey(update.getCallbackQuery().getData())) sendDoc(callbackQueryService.getFile(update));
+            else send(callbackQueryService.handleCallbackText(update));
         }
     }
 
     @SneakyThrows
-    public void notification(List<SendDocument> sendDocs) {
-        for (SendDocument doc : sendDocs) {
-            execute(doc);
-        }
+    public void sendDoc(SendDocument send) {
+            execute(send);
     }
 
     @SneakyThrows
-    public void error(SendMessage sendMessage) {
-        execute(sendMessage);
+    public <T extends Serializable, Method extends BotApiMethod<T>> void send(Method method) {
+        execute(method);
     }
 }

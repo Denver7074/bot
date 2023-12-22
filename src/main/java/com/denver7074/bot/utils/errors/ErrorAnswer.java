@@ -10,8 +10,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import static java.util.Collections.emptyList;
-
 @Aspect
 @Order(2)
 @Component
@@ -23,6 +21,6 @@ public class ErrorAnswer {
 
     @AfterThrowing(pointcut = "@annotation(ToThrow)", throwing = "exception")
     public void handleException(Errors.CustomException exception) {
-        telegramBot.error(new SendMsg(exception.getMsg(), exception.getUserId(), exception.getBotButton()).getMsg());
+        telegramBot.send(new SendMsg(exception.getMsg(), exception.getUserId(), exception.getBotButton()).getMsg());
     }
 }

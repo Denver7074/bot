@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Accessors(chain = true)
-@RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @EntityListeners(AuditingEntityListener.class)
 public class Subscriber implements Serializable {

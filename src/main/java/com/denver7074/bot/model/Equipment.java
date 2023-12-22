@@ -22,7 +22,6 @@ import static com.denver7074.bot.utils.Utils.convertDate;
 @Entity
 @FieldNameConstants
 @Accessors(chain = true)
-@RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Equipment extends IdentityEntity {

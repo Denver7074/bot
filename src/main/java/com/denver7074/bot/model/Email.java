@@ -22,7 +22,6 @@ import static org.apache.commons.lang3.BooleanUtils.isFalse;
 @Entity
 @FieldNameConstants
 @Accessors(chain = true)
-@RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Email extends IdentityEntity {

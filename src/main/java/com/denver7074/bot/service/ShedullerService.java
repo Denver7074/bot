@@ -50,7 +50,7 @@ public class ShedullerService {
                 Equipment lastVerification = verificationService.findLastVerification(key, equipment.getMitNumber(), equipment.getNumber());
                 if (lastVerification.getValidDate().isAfter(equipment.getValidDate())) {
                     crudService.update(key, lastVerification, equipment.getId(), Equipment.class);
-//                    eq.remove(i);
+                    eq.remove(i);
                 }
             }
             if (isEmpty(eq)) equipmentMap.remove(key);
@@ -66,7 +66,9 @@ public class ShedullerService {
             );
         }
         mailService.emailNotification(equipmentMap, message);
-        telegramBot.notification(sendDocs);
+        for (SendDocument sendDoc : sendDocs) {
+            telegramBot.sendDoc(sendDoc);
+        }
     }
 
 }
