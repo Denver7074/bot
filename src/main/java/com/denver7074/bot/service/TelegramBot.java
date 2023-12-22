@@ -10,6 +10,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -28,21 +29,25 @@ import java.util.List;
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class TelegramBot extends TelegramLongPollingBot {
 
+    Menu menu;
     BotConfig botConfig;
     TextCommand textCommand;
     InvoiceService invoiceService;
     FileMessageService fileMessageService;
     CallbackQueryService callbackQueryService;
 
-    @SneakyThrows
-    public void telegramBot() {
-        List<BotCommand> botCommandList = List.of(
-                new BotCommand("/start", "Старт"),
-                new BotCommand("/help", "Расскажи о себе"),
-                new BotCommand("/profile", "Мой профиль"),
-                new BotCommand("/verification", "Поверка СИ"));
-        execute(new SetMyCommands(botCommandList, new BotCommandScopeDefault(), null));
-    }
+//    @SneakyThrows
+//    public TelegramBot(BotConfig botConfig) {
+//        this.botConfig = botConfig;
+//        this.execute(new SetMyCommands(List.of(
+//                new BotCommand("/start", "Начинаем"),
+//                new BotCommand("/help", "Расскажи о себе"),
+//                new BotCommand("/profile", "Мой профиль"),
+//                new BotCommand("/verification", "Поверка СИ")),
+//                new BotCommandScopeDefault(),
+//                null));
+//    }
+
     @Override
     public String getBotUsername() {
         return botConfig.getBotName();
@@ -54,7 +59,9 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     @Override
+    @SneakyThrows
     public void onUpdateReceived(Update update) {
+        execute(menu.menu());
         if (update.hasMessage()) {
             if (update.getMessage().hasText()) {
                 send(textCommand.handleUpdateText(update));

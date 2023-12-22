@@ -78,16 +78,16 @@ public class SendMsg {
 
     private static InlineKeyboardMarkup getKeyBoards(Collection<String> textButtons) {
         if (isEmpty(textButtons)) return null;
-        List<InlineKeyboardButton> buttons = new ArrayList<>(textButtons.size());
+        List<List<InlineKeyboardButton>> buttons = new ArrayList<>(textButtons.size());
         for (String l : textButtons) {
-            buttons.add(InlineKeyboardButton.builder()
+            buttons.add(List.of(InlineKeyboardButton.builder()
                             .text(l)
                             .callbackData(l)
-                            .build());
+                            .build()));
         }
         return InlineKeyboardMarkup
                 .builder()
-                .keyboard(List.of(buttons))
+                .keyboard(buttons)
                 .build();
     }
 }
