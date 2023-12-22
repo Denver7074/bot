@@ -108,11 +108,26 @@ git clone https://github.com/Denver7074/test.git
 - E005 "У вас пока нет приборов чтобы выполнить это действие";
 ## Работа с приложением
 ### Главное меню
+![image](https://github.com/Denver7074/bot/assets/119703412/3b91ba15-9359-4ed8-8b49-a42e73cb239f)
+### Старт
+![image](https://github.com/Denver7074/bot/assets/119703412/4c552880-4189-4ff3-999f-3efa5b5cee66)
 ### Помощь
+![image](https://github.com/Denver7074/bot/assets/119703412/e7fee217-e82e-474e-9c02-568fcb3fc27e)
 ### О себе
+![image](https://github.com/Denver7074/bot/assets/119703412/5fbf25ff-0b5a-4f9e-97f5-14c7efb452ed)
 ### Работа с поверкой
+![image](https://github.com/Denver7074/bot/assets/119703412/8f6d51ed-4539-4fac-89a8-d633036cbaf0)
 ### Управление e-mail оповещением
+![image](https://github.com/Denver7074/bot/assets/119703412/71c94619-1182-48cc-aaa9-d66885e12150)
 ### Просмотр списка CИ
+![image](https://github.com/Denver7074/bot/assets/119703412/a003e369-37b0-4c0c-aaa6-be5a2ff7734d)
+![image](https://github.com/Denver7074/bot/assets/119703412/f7f1616b-facc-4290-90dd-3ddf8952dd99)
 ### Изменить название СИ
+![image](https://github.com/Denver7074/bot/assets/119703412/4dbe3037-5386-4852-8702-b312233ba819)
+![image](https://github.com/Denver7074/bot/assets/119703412/bc9a56f4-ebbd-41bf-b19a-fa5592a6d6d3)
 ### Поиск и добавление СИ
+![image](https://github.com/Denver7074/bot/assets/119703412/db21c645-aaf1-4a26-9047-757366a100c8)
+![image](https://github.com/Denver7074/bot/assets/119703412/a0cc3379-2d6a-408b-8c28-3ebe87701312)
+![image](https://github.com/Denver7074/bot/assets/119703412/27413fd2-507e-419e-8a21-fb035033c90c)
+
 
