@@ -136,6 +136,7 @@ git clone https://github.com/Denver7074/test.git
 В данном разделе в можете провести поиск СИ:
 -  ручной ввод ответного сообщения как показано в примере ввода;
 -  автоматический массовый поиск оборудования и сохранение в бд с помощью заполнения excel фйла и ответной отправки.
+
 ![image](https://github.com/Denver7074/bot/assets/119703412/db21c645-aaf1-4a26-9047-757366a100c8)
 ![image](https://github.com/Denver7074/bot/assets/119703412/a0cc3379-2d6a-408b-8c28-3ebe87701312)
 ![image](https://github.com/Denver7074/bot/assets/119703412/27413fd2-507e-419e-8a21-fb035033c90c)
