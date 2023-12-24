@@ -97,7 +97,7 @@ userName и password в данном приложении использовал
 ## Запуск
 Клонируйте репозиторий из Git
 ```bash
-git clone https://github.com/Denver7074/test.git
+https://github.com/Denver7074/bot.git
 ```
 Используя сборщик проектов `Gradle` соберите проект.
 ## Exception
