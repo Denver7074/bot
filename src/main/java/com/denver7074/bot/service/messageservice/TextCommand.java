@@ -41,20 +41,20 @@ public class TextCommand {
     }
 
     private SendMessage sendFromText(String command, Subscriber user) {
-        SendMessage sendMsg = null;
+        SendMessage sendMsg;
         switch (command) {
             case "/start"-> sendMsg = SHOW_START_MENU.sendMessage(user, emptyList(), user.getFirstName());
             case "/help" -> sendMsg = SHOW_HELP_MENU.sendMessage(user, emptyList());
             case "/verification"-> sendMsg = BotState.WORK_WITH_VERIFICATION.sendMessage(user, BotButton.verification.keySet());
             case "/profile"-> sendMsg = BotState.ABOUT_ME.sendMessage(user, emptyList(), user.toString());
             default -> sendMsg = sendFromBotState(command, user);
-        };
+        }
         redisCash.save(user);
         return sendMsg;
     }
 
     private SendMessage sendFromBotState(String command, Subscriber user) {
-        SendMessage sendMsg = null;
+        SendMessage sendMsg;
         switch (user.getBotState()) {
             case VERIFICATION_FIND, SAVE_VERIFICATION-> sendMsg = SAVE_VERIFICATION.sendMessage(user, List.of(BotButton.SAVE_VERIFICATION.getValue()), service.findLastVerification(user, command).toString());
             case EMAIL_NOTIFICATION ->  {

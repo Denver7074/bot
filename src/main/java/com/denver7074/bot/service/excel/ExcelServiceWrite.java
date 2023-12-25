@@ -30,7 +30,7 @@ public class ExcelServiceWrite {
         Class<?> t = ExcelRequest.class;
         if (CollectionUtils.isNotEmpty(data)) t = data.iterator().next().getClass();
         try (Workbook workbook = new XSSFWorkbook();
-             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()
         ) {
             Sheet sheet = workbook.createSheet();
 

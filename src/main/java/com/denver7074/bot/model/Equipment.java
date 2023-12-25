@@ -8,7 +8,6 @@ import jakarta.persistence.Entity;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.FieldNameConstants;
@@ -76,7 +75,4 @@ public class Equipment extends IdentityEntity {
                 result + '\n' +
                 href;
     }
-//    public void reachTransient(CrudService crudService) {
-//
-//    }
 }

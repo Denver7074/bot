@@ -14,21 +14,18 @@ import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 
 import static com.denver7074.bot.utils.Constants.USER_STATE;
-import static com.denver7074.bot.utils.Utils.safeGet;
 
 @Service
 @RequiredArgsConstructor
@@ -41,7 +38,7 @@ public class FileMessageService {
     BotConfig botConfig;
 
     public SendDocument handleUpdateText(Update update) {
-        Subscriber user = safeGet(() -> redisCash.find(USER_STATE, update.getMessage().getFrom().getId(), Subscriber.class));
+        Subscriber user = redisCash.find(USER_STATE, update.getMessage().getFrom().getId(), Subscriber.class);
         excelServiceRead.readExcel(new ByteArrayInputStream(loadFile(update)), user);
         List<Equipment> equipment = crudService.find(Equipment.class, Collections.singletonMap(Equipment.Fields.userId, user.getId()), null);
         SendDocument sendDocument = BotState.VERIFICATION_SHOW.sendMessage(user, ExcelServiceWrite.writeDataToExcel(equipment));
@@ -58,9 +55,6 @@ public class FileMessageService {
         JSONObject jsonObject = new JSONObject(getFile);
         JSONObject path = jsonObject.getJSONObject("result");
         String filePath = path.getString("file_path");
-        try (InputStream is = new URL(botConfig.getFileStore() + filePath).openStream()) {
-            br.close();
-            return IOUtils.toByteArray(is);
-        }
+        return IOUtils.toByteArray(new URL(botConfig.getFileStore() + filePath).openStream());
     }
 }

@@ -9,6 +9,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -40,11 +41,12 @@ public class ExcelServiceRead {
             int len = sheet.getLastRowNum() + 1;
             List<ExcelRequest> excelRequests = new ArrayList<>(len);
             for (int i = 1; i < len; i++) {
+                Row row = sheet.getRow(i);
                 excelRequests.add(new ExcelRequest()
-                        .setMitNumber(sheet.getRow(i).getCell(0).toString().replaceAll(" ", ""))
-                        .setNumber(String.valueOf(sheet.getRow(i).getCell(1).getRichStringCellValue()))
-                        .setName(sheet.getRow(i).getCell(2).toString())
-                        .setModification(sheet.getRow(i).getCell(3).toString())
+                        .setMitNumber(row.getCell(0).toString().replaceAll(" ", ""))
+                        .setNumber(String.valueOf(row.getCell(1).getRichStringCellValue()))
+                        .setName(row.getCell(2).toString())
+                        .setModification(row.getCell(3).toString())
                 );
             }
 

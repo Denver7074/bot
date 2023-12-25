@@ -6,23 +6,18 @@ import com.denver7074.bot.service.messageservice.CallbackQueryService;
 import com.denver7074.bot.service.messageservice.FileMessageService;
 import com.denver7074.bot.service.messageservice.TextCommand;
 import com.denver7074.bot.service.messageservice.invoice.InvoiceService;
+import com.denver7074.bot.utils.Menu;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
-import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
 
 import java.io.Serializable;
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -35,18 +30,6 @@ public class TelegramBot extends TelegramLongPollingBot {
     InvoiceService invoiceService;
     FileMessageService fileMessageService;
     CallbackQueryService callbackQueryService;
-
-//    @SneakyThrows
-//    public TelegramBot(BotConfig botConfig) {
-//        this.botConfig = botConfig;
-//        this.execute(new SetMyCommands(List.of(
-//                new BotCommand("/start", "Начинаем"),
-//                new BotCommand("/help", "Расскажи о себе"),
-//                new BotCommand("/profile", "Мой профиль"),
-//                new BotCommand("/verification", "Поверка СИ")),
-//                new BotCommandScopeDefault(),
-//                null));
-//    }
 
     @Override
     public String getBotUsername() {

@@ -17,7 +17,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.Arrays;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -45,7 +45,7 @@ public class InvoiceService {
 //    доработать
     public void handleUpdateVoiceRest(Update update) {
         HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+        headers.setAccept(List.of(MediaType.APPLICATION_JSON));
         headers.setBearerAuth(botConfig.getYandexKey());
         RequestEntity<?> requestEntity = new RequestEntity<>(headers, HttpMethod.POST, URI.create(POST_URL_SPEECH));
 
@@ -54,9 +54,4 @@ public class InvoiceService {
                 JsonNode.class
         );
     }
-
-//    public String handleUpdateVoiceFeign(Update update) {
-//        String data = invoiceRep.getData(API_KEY_YANDEX_CLOUD, fileMessageService.loadFile(update));
-//        return data;
-//    }
 }

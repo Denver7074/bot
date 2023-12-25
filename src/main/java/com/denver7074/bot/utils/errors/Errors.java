@@ -1,17 +1,16 @@
 package com.denver7074.bot.utils.errors;
 
-import com.denver7074.bot.model.BotButton;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
 
 import static org.apache.commons.lang3.ObjectUtils.allNull;
+import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 
 @Getter
 @RequiredArgsConstructor
@@ -44,7 +43,7 @@ public enum Errors {
         Collection<String> botButton;
 
         public String getMsg() {
-            return StringUtils.defaultString(message, error.description);
+            return isNotEmpty(message) ? message : error.description;
         }
 
         public String getMessage() {

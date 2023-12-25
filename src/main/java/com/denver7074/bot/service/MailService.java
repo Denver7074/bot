@@ -9,7 +9,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -20,6 +19,8 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import static com.denver7074.bot.utils.Constants.FORMAT_FILE;
 
 @Service
 @RequiredArgsConstructor
@@ -60,7 +61,7 @@ public class MailService {
                 public InputStream getInputStream() {
                     return inputStream;
                 }
-            }, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            }, FORMAT_FILE);
 
             mailSender.send(mimeMessage);
         }

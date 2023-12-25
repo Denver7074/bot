@@ -38,7 +38,7 @@ public class CallbackQueryService {
         if(isEmpty(botButton)) botButton = SAVE_VERIFICATION;
         Integer messageId = update.getCallbackQuery().getMessage().getMessageId();
         Subscriber user = redisCash.find(USER_STATE, update.getCallbackQuery().getFrom().getId(), Subscriber.class);
-        EditMessageText editMsg = null;
+        EditMessageText editMsg;
         switch (botButton) {
             case SAVE_VERIFICATION -> {
                 redisCash.save(user, null);
@@ -59,7 +59,7 @@ public class CallbackQueryService {
     public SendDocument getFile(Update update) {
         Subscriber user = redisCash.find(USER_STATE, update.getCallbackQuery().getFrom().getId(), Subscriber.class);
         BotButton botButton = showAndUpdate.get(update.getCallbackQuery().getData());
-        SendDocument sendDoc = null;
+        SendDocument sendDoc;
         switch (botButton) {
             case VERIFICATION_SHOW -> {
                 List<Equipment> equipment = find(user);
