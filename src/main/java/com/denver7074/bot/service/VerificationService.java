@@ -1,4 +1,4 @@
-package com.denver7074.bot.service.verification;
+package com.denver7074.bot.service;
 
 import com.denver7074.bot.model.Equipment;
 import com.denver7074.bot.model.Subscriber;

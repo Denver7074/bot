@@ -5,7 +5,7 @@ import com.denver7074.bot.model.BotButton;
 import com.denver7074.bot.service.messageservice.CallbackQueryService;
 import com.denver7074.bot.service.messageservice.FileMessageService;
 import com.denver7074.bot.service.messageservice.TextCommand;
-import com.denver7074.bot.service.messageservice.invoice.InvoiceService;
+import com.denver7074.bot.service.messageservice.InvoiceService;
 import com.denver7074.bot.utils.Menu;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -50,6 +50,8 @@ public class TelegramBot extends TelegramLongPollingBot {
                 send(textCommand.handleUpdateText(update));
             } else if (update.getMessage().hasDocument()) {
                 sendDoc(fileMessageService.handleUpdateText(update));
+            } else if (update.getMessage().hasVoice()) {
+                send(invoiceService.handleUpdateVoice(update));
             }
         } else if (update.hasCallbackQuery()) {
             if (BotButton.showAndUpdate.containsKey(update.getCallbackQuery().getData())) sendDoc(callbackQueryService.getFile(update));

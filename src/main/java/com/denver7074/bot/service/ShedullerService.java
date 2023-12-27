@@ -4,8 +4,6 @@ import com.denver7074.bot.model.BotState;
 import com.denver7074.bot.model.Equipment;
 import com.denver7074.bot.service.excel.ExcelServiceWrite;
 import com.denver7074.bot.service.response.SendMsg;
-import com.denver7074.bot.service.verification.VerificationService;
-import jakarta.annotation.PostConstruct;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -24,7 +22,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyMap;
-import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
 @Service
 @RequiredArgsConstructor
@@ -37,8 +34,8 @@ public class ShedullerService {
     VerificationService verificationService;
 
     @SneakyThrows
-    @PostConstruct
-//    @Scheduled(cron = "${cron.finish.verification}")
+//    @PostConstruct
+    @Scheduled(cron = "${cron.finish.verification}")
     public void notificationFinishVerification() {
         Map<Long, List<Equipment>> equipmentMap = crudService
                 .find(Equipment.class, emptyMap(), Pair.of(Equipment.Fields.validDate, LocalDate.now().plusDays(30)))

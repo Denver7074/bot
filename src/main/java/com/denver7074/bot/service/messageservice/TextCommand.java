@@ -5,7 +5,7 @@ import com.denver7074.bot.model.BotState;
 import com.denver7074.bot.model.Email;
 import com.denver7074.bot.model.Subscriber;
 import com.denver7074.bot.service.CrudService;
-import com.denver7074.bot.service.verification.VerificationService;
+import com.denver7074.bot.service.VerificationService;
 import com.denver7074.bot.utils.RedisCash;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

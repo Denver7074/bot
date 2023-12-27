@@ -4,7 +4,7 @@ import com.denver7074.bot.model.BotState;
 import com.denver7074.bot.model.Equipment;
 import com.denver7074.bot.model.Subscriber;
 import com.denver7074.bot.service.CrudService;
-import com.denver7074.bot.service.verification.VerificationService;
+import com.denver7074.bot.service.VerificationService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;

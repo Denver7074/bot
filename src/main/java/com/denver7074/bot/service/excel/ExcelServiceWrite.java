@@ -1,5 +1,6 @@
 package com.denver7074.bot.service.excel;
 
+import com.denver7074.bot.utils.Utils;
 import lombok.SneakyThrows;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -20,6 +21,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.*;
 
+import static com.denver7074.bot.service.excel.ExcelUtils.patternFormat;
 import static org.springframework.util.ReflectionUtils.getField;
 
 @Service
@@ -45,7 +47,7 @@ public class ExcelServiceWrite {
                     writeRowData(dataRow, dataObject, dataStyle);
                 }
             }
-            for (int i = 0; i < excelColumns.size(); i++) {
+            for (int i = 0; i < excelColumns.size() + 1; i++) {
                 sheet.autoSizeColumn(i);
             }
             workbook.write(byteArrayOutputStream);
@@ -73,7 +75,7 @@ public class ExcelServiceWrite {
         return startRow;
     }
 
-    private static int writeRowData(Row dataRow, Object data, CellStyle dataStyle) {
+    private static void writeRowData(Row dataRow, Object data, CellStyle dataStyle) {
         Field[] fields = FieldUtils.getFieldsWithAnnotation(
                 Objects.requireNonNull(data).getClass(), ExcelCell.class);
         for (int i = 0; i < fields.length; i++) {
@@ -82,12 +84,11 @@ public class ExcelServiceWrite {
             Class<?> type = field.getType();
             if (BeanUtils.isSimpleValueType(type)) {
                 Cell cell = dataRow.createCell(i);
-                cell.setCellValue(ExcelUtils.patternFormat(getField(field, data)));
+                cell.setCellValue(patternFormat(getField(field, data)));
                 cell.setCellStyle(dataStyle);
             } else {
                 writeRowData(dataRow, getField(field, data), dataStyle);
             }
         }
-        return fields.length;
     }
 }

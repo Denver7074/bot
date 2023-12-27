@@ -23,6 +23,7 @@ public class BotConfig {
     String userName;
     String password;
     String yandexKey;
+    String folderId;
 
     @JsonProperty("botToken")
     public void setBotToken(String botToken) {

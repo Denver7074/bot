@@ -90,10 +90,13 @@ spring.cloud.vault.path=Путь к вашим ключам
 - userName - email с какого будет производиться рассылка
 - password - пароль (ключ) от данной почты
 - yandexKey - ключ от yandex speech
+- folderId - идентификатор каталога
 
 botName и botToken получают в телеграмм-боте BotFather.
 
 userName и password в данном приложении использовалось от сервиса Google Mail.
+
+yandexKey и folderId получают в yandex cloud
 ## Запуск
 Клонируйте репозиторий из Git
 ```bash
